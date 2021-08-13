@@ -2,6 +2,7 @@ const express = require("express");
 const notFound = require("./errors/notFound");
 const errorHandler = require("./errors/errorHandler");
 const urlsRouter = require("./urls/urls.router");
+const usesRouter = require("./uses/uses.router");
 
 const app = express();
 
