@@ -6,7 +6,9 @@ const app = express();
 
 app.use(express.json());
 
-// Start of Pipeline
+// Pipeline
+app.use("/urls", urlsRouter);
+app.use("/uses", usesRouter);
 
 app.use(notFound);
 app.use(errorHandler);
