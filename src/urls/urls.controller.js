@@ -1,6 +1,8 @@
 const urls = require("../data/urls-data");
+const uses = require("../data/uses-data");
 
 /******************************* Middleware *******************************/
+// Validates that the data within the body of the request has an href property.
 function bodyHasHref(req, res, next) {
   // grab the href from the request body
   const { data: { href } = {} } = req.body;
@@ -13,6 +15,7 @@ function bodyHasHref(req, res, next) {
   next({ status: 400, message: "An 'href' property is required." });
 }
 
+// Validates that the urlId param exists
 function urlExists(req, res, next) {
   // grab the urlId from the path params
   const urlId = Number(req.params.urlId);
@@ -30,6 +33,17 @@ function urlExists(req, res, next) {
     status: 404,
     message: `Url id not found: ${req.params.urlId}`,
   });
+}
+
+// This happens as a side effect of reading the url
+function createUseObj(req, res, next) {
+  // Create a new use object each time a url is accessed
+  uses.push({
+    id: uses.length + 1,
+    urlId: res.locals.foundUrl.id,
+    time: Date.now(),
+  });
+  next();
 }
 
 /******************************* L-CRUD *******************************/
@@ -64,7 +78,7 @@ function update(req, res) {
 module.exports = {
   create: [bodyHasHref, create],
   list,
-  read: [urlExists, read],
+  read: [urlExists, createUseObj, read],
   update: [urlExists, bodyHasHref, update],
   urlExists: urlExists,
 };
